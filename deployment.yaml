@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: circleci-proj2  
+  name: circleci  
   labels: 
-    name: "circleci-proj2"
+    name: "circleci"
   annotations:
     # force policy will ensure that deployment is updated
     # even when tag is unchanged (latest remains)
@@ -15,17 +15,17 @@ spec:
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: circleci-proj2
+      app: circleci
   template:
     metadata:
-      name: circleci-proj2
+      name: circleci
       labels:
-        app: circleci-proj2
+        app: circleci
     spec:     
       containers:                    
         - image: vishwakarmaniraj/circleci-proj:latest
           imagePullPolicy: Always # this is required to force pull image     
-          name: circleci-proj2
+          name: circleci
           ports:
             - containerPort: 80
               #livenessProbe:
@@ -38,10 +38,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: circleci-proj2
+  name: circleci
 spec:
   selector:
-    app: circleci-proj2
+    app: circleci
   ports:
     - port: 80
       targetPort: 80
@@ -50,13 +50,13 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: circleci-proj2
+  name: circleci
 spec:
   rules:
-  - host: circleci-proj2.example.com 
+  - host: circleci.example.com 
     http:
       paths:
       - path: /
         backend:
-          serviceName: circleci-proj2
+          serviceName: circleci
           servicePort: 80
