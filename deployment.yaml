@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: circleci-proj2  
+  labels: 
+    name: "circleci-proj2"
+  annotations:
+    # force policy will ensure that deployment is updated
+    # even when tag is unchanged (latest remains)
+    #keel.sh/policy: major
+    #keel.sh/trigger: poll
+    #keel.sh/pollSchedule: "@every 30s"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: circleci-proj2
+  template:
+    metadata:
+      name: circleci-proj2
+      labels:
+        app: circleci-proj2
+    spec:     
+      containers:                    
+        - image: vishwakarmaniraj/circleci-proj:latest
+          imagePullPolicy: Always # this is required to force pull image     
+          name: circleci-proj2
+          ports:
+            - containerPort: 80
+              #livenessProbe:
+              # httpGet:
+              #path: /
+              #port: 8500
+              #initialDelaySeconds: 10
+              #timeoutSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: circleci-proj2
+spec:
+  selector:
+    app: circleci-proj2
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: circleci-proj2
+spec:
+  rules:
+  - host: circleci-proj2.example.com 
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: circleci-proj2
+          servicePort: 80
